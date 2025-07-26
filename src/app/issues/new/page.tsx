@@ -26,8 +26,9 @@ const NewIssuePage = () => {
     resolver: zodResolver(issueSchema),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleFormSubmission = async (data: IssueForm) => {
+  const handleFormSubmission = handleSubmit(async (data) => {
     try {
       setIsSubmitting(true);
       await axios.post("/api/issues", data);
@@ -36,16 +37,18 @@ const NewIssuePage = () => {
       }, 2000);
     } catch (error) {
       setIsSubmitting(false);
-      console.error(error);
+      setError("An unexpected error occured.");
     }
-  };
+  });
 
   return (
     <div className="max-w-xl">
-      <form
-        className="space-y-3"
-        onSubmit={handleSubmit((data) => handleFormSubmission(data))}
-      >
+      {error && (
+        <Callout.Root color="red" className="mb-5">
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
+      <form className="space-y-3" onSubmit={handleFormSubmission}>
         <TextField.Root
           placeholder="Title"
           {...register("title")}
