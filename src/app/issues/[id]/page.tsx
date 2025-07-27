@@ -1,10 +1,10 @@
 import React from "react";
-import { Box, Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
+import { Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { prisma } from "@/../prisma/client";
 import { notFound } from "next/navigation";
-import delay from "delay";
-import StatusBadge from "@/app/components/StatusBadge";
+import { StatusBadge } from "@/app/components";
 import Markdown from "react-markdown";
+import delay from "delay";
 interface Props {
   params: { id: string };
 }
