@@ -16,12 +16,18 @@ export async function GET(
   return NextResponse.json(issue);
 }
 
-export async function PUT(
+export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // validate body first
   const body = await request.json();
+  const validate = issueSchema.safeParse(body);
 
+  if (!validate.success)
+    return NextResponse.json(validate.error.issues, { status: 400 });
+
+  // find & check if issue exists
   const issue = await prisma.issue.findUnique({
     where: { id: Number(params.id) },
   });
@@ -29,11 +35,7 @@ export async function PUT(
   if (!issue)
     return NextResponse.json({ error: "Issue not found" }, { status: 404 });
 
-  const validate = issueSchema.safeParse(body);
-
-  if (!validate.success)
-    return NextResponse.json(validate.error.issues, { status: 400 });
-
+  // update issue
   const updatedIssue = await prisma.issue.update({
     where: {
       id: Number(params.id),
