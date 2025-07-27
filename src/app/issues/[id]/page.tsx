@@ -1,10 +1,9 @@
-import React from "react";
-import { Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
-import { prisma } from "@/../prisma/client";
-import { notFound } from "next/navigation";
-import { StatusBadge } from "@/app/components";
-import Markdown from "react-markdown";
+import { prisma } from "@/lib/prisma";
+import { Box, Grid } from "@radix-ui/themes";
 import delay from "delay";
+import { notFound } from "next/navigation";
+import EditIssueButton from "./EditIssueButton";
+import IssueDetails from "./IssueDetails";
 interface Props {
   params: { id: string };
 }
@@ -19,17 +18,14 @@ const IssuePage = async ({ params }: Props) => {
   await delay(1000);
 
   return (
-    <Box className="max-w-xl">
-      <Heading>{issue.title}</Heading>
-      <Flex gap="3" className="mt-4">
-        <StatusBadge status={issue.status}></StatusBadge>
-        <Text>{issue.createdAt.toDateString()}</Text>
-      </Flex>
-
-      <Card className="prose mt-4">
-        <Markdown>{issue.description}</Markdown>
-      </Card>
-    </Box>
+    <Grid columns={{ initial: "1", xs: "2" }} gap="5">
+      <Box>
+        <IssueDetails issue={issue} />
+      </Box>
+      <Box>
+        <EditIssueButton issueId={params.id} />
+      </Box>
+    </Grid>
   );
 };
 

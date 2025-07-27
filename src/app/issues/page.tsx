@@ -1,4 +1,4 @@
-import { prisma } from "@/../prisma/client";
+import { prisma } from "@/lib/prisma";
 import { Link, StatusBadge } from "@/app/components";
 import { Table } from "@radix-ui/themes";
 import delay from "delay";
