@@ -34,7 +34,7 @@ const NewIssuePage = () => {
       await axios.post("/api/issues", data);
       setTimeout(() => {
         router.push("/issues");
-      }, 2000);
+      }, 1000);
     } catch (error) {
       setIsSubmitting(false);
       setError("An unexpected error occured.");
