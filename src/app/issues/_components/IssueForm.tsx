@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Callout, TextField } from "@radix-ui/themes";
-import dynamic from "next/dynamic";
 import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
@@ -12,6 +11,7 @@ import { issueSchema } from "@/app/validationSchemas";
 import { z } from "zod";
 import { ErrorMessage, Spinner } from "@/app/components";
 import { Issue } from "@prisma/client";
+import dynamic from "next/dynamic";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
