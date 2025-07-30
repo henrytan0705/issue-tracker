@@ -48,6 +48,7 @@ const IssueForm = ({ issue }: Props) => {
         await axios.post("/api/issues", data);
         setTimeout(() => {
           router.push("/issues");
+          router.refresh();
         }, 1000);
       }
     } catch (error) {
