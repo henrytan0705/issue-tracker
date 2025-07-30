@@ -4,10 +4,12 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const id = (await params).id;
+
   const issue = await prisma.issue.findUnique({
-    where: { id: Number(params.id) },
+    where: { id: Number(id) },
   });
 
   if (!issue)
@@ -18,8 +20,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const id = (await params).id;
+
   // validate body first
   const body = await request.json();
   const validate = issueSchema.safeParse(body);
@@ -29,7 +33,7 @@ export async function PATCH(
 
   // find & check if issue exists
   const issue = await prisma.issue.findUnique({
-    where: { id: Number(params.id) },
+    where: { id: Number(id) },
   });
 
   if (!issue)
@@ -38,7 +42,7 @@ export async function PATCH(
   // update issue
   const updatedIssue = await prisma.issue.update({
     where: {
-      id: Number(params.id),
+      id: Number(id),
     },
     data: {
       title: body.title,
@@ -51,16 +55,18 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const id = (await params).id;
+
   const issue = await prisma.issue.findUnique({
-    where: { id: Number(params.id) },
+    where: { id: Number(id) },
   });
 
   if (!issue)
     return NextResponse.json({ error: "Issue not found." }, { status: 404 });
 
-  await prisma.issue.delete({ where: { id: Number(params.id) } });
+  await prisma.issue.delete({ where: { id: Number(id) } });
 
   return NextResponse.json(
     { message: "Issue deleted successfully." },

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { PropsWithChildren } from "react";
-import { Text, TextField } from "@radix-ui/themes";
+import { Text } from "@radix-ui/themes";
+import { PropsWithChildren } from "react";
 import { MdError } from "react-icons/md";
 
 const ErrorMessage = ({ children }: PropsWithChildren) => {
