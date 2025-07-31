@@ -4,8 +4,8 @@ import "./globals.css";
 import "@radix-ui/themes/styles.css";
 import { Container, Theme } from "@radix-ui/themes";
 import "./theme-config.css";
-
 import NavBar from "./NavBar";
+import AuthProvider from "./auth/Provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,14 +25,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>
-        <Theme>
-          <NavBar></NavBar>
-          <Container>
-            <main className="p-5">{children}</main>
-          </Container>
-        </Theme>
-      </body>
+      <AuthProvider>
+        <body className={`${inter.variable} antialiased`}>
+          <Theme>
+            <NavBar></NavBar>
+            <Container>
+              <main className="p-5">{children}</main>
+            </Container>
+          </Theme>
+        </body>
+      </AuthProvider>
     </html>
   );
 }

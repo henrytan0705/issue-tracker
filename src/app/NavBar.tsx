@@ -5,9 +5,12 @@ import React from "react";
 import { GiRadarSweep } from "react-icons/gi";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
+import { useSession } from "next-auth/react";
+import { Box } from "@radix-ui/themes";
 
 const NavBar = () => {
   const pathname = usePathname();
+  const { status, data: session } = useSession();
 
   const links = [
     { label: "Dashboard", href: "/" },
@@ -22,19 +25,28 @@ const NavBar = () => {
 
       <ul className="flex space-x-6">
         {links.map(({ label, href }) => (
-          <Link
-            key={href}
-            className={classNames({
-              "text-gray-500": pathname !== href,
-              "text-gray-900": pathname === href,
-              "hover:text-gray-800 transition-colors": true,
-            })}
-            href={href}
-          >
-            {label}
-          </Link>
+          <li key={href}>
+            <Link
+              className={classNames({
+                "text-gray-500": pathname !== href,
+                "text-gray-900": pathname === href,
+                "hover:text-gray-800 transition-colors": true,
+              })}
+              href={href}
+            >
+              {label}
+            </Link>
+          </li>
         ))}
       </ul>
+
+      <Box>
+        {status === "authenticated" ? (
+          <Link href="/api/auth/signout">Log Out</Link>
+        ) : (
+          <Link href="/api/auth/signin">Log In</Link>
+        )}
+      </Box>
     </nav>
   );
 };
