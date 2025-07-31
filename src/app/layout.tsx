@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
-import { Theme } from "@radix-ui/themes";
+import { Container, Theme } from "@radix-ui/themes";
 import "./theme-config.css";
 
 import NavBar from "./NavBar";
@@ -28,7 +28,9 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <Theme>
           <NavBar></NavBar>
-          <main className="p-5">{children}</main>
+          <Container>
+            <main className="p-5">{children}</main>
+          </Container>
         </Theme>
       </body>
     </html>
