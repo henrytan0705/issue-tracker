@@ -6,6 +6,7 @@ import { Flex, Select } from "@radix-ui/themes";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/app/components";
+import toast, { Toaster } from "react-hot-toast";
 
 const AssignIssueDropdown = ({ issue }: { issue: Issue }) => {
   const {
@@ -19,13 +20,15 @@ const AssignIssueDropdown = ({ issue }: { issue: Issue }) => {
     retry: 3,
   });
 
-  const assignIssue = (userId: string) => {
+  const assignIssue = async (userId: string) => {
     try {
-      axios.patch("/api/issues/" + issue.id, {
+      await axios.patch("/api/issues/" + issue.id, {
         assignedToUserId: userId === "null" ? null : userId,
       });
+      toast.success("Issue assigned successfully!");
     } catch (error) {
       console.error(error);
+      toast.error("Unable to assign task.");
     }
   };
 
@@ -34,32 +37,35 @@ const AssignIssueDropdown = ({ issue }: { issue: Issue }) => {
   if (error) return null;
 
   return (
-    <Select.Root
-      defaultValue={issue?.assignedToUserId || "null"}
-      onValueChange={(userId) => assignIssue(userId)}
-    >
-      <Select.Trigger placeholder="Assign Issue" />
+    <>
+      <Toaster />
+      <Select.Root
+        defaultValue={issue?.assignedToUserId || "null"}
+        onValueChange={(userId) => assignIssue(userId)}
+      >
+        <Select.Trigger placeholder="Assign Issue" />
 
-      <Select.Content>
-        <Select.Group>
-          <Select.Label>Suggestions</Select.Label>
-          <Select.Item value="null">
-            <Flex align="center" gap="2">
-              <AvatarIcon />
-              Unassigned
-            </Flex>
-          </Select.Item>
-          {users?.map(({ id, name }) => (
-            <Select.Item key={id} value={id}>
+        <Select.Content>
+          <Select.Group>
+            <Select.Label>Suggestions</Select.Label>
+            <Select.Item value="null">
               <Flex align="center" gap="2">
                 <AvatarIcon />
-                {name}
+                Unassigned
               </Flex>
             </Select.Item>
-          ))}
-        </Select.Group>
-      </Select.Content>
-    </Select.Root>
+            {users?.map(({ id, name }) => (
+              <Select.Item key={id} value={id}>
+                <Flex align="center" gap="2">
+                  <AvatarIcon />
+                  {name}
+                </Flex>
+              </Select.Item>
+            ))}
+          </Select.Group>
+        </Select.Content>
+      </Select.Root>
+    </>
   );
 };
 
