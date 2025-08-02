@@ -8,16 +8,21 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = (await params).id;
+  try {
+    const id = (await params).id;
 
-  const issue = await prisma.issue.findUnique({
-    where: { id: Number(id) },
-  });
+    const issue = await prisma.issue.findUnique({
+      where: { id: Number(id) },
+    });
 
-  if (!issue)
-    return NextResponse.json({ error: "Issue not found" }, { status: 404 });
+    if (!issue)
+      return NextResponse.json({ error: "Issue not found" }, { status: 404 });
 
-  return NextResponse.json(issue);
+    return NextResponse.json(issue);
+  } catch (error) {
+    console.error("Error /api/issues/[id] failed:", error);
+    return NextResponse.json({ error }, { status: 500 });
+  }
 }
 
 export async function PATCH(
