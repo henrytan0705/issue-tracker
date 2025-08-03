@@ -18,8 +18,15 @@ const IssueStatusFilter = () => {
   ];
 
   const filterIssues = (status: string) => {
-    const query = status !== "ALL" ? `?status=${status}` : "";
-    router.push("/issues" + query);
+    const params = new URLSearchParams();
+
+    if (status) params.append("status", status);
+
+    const orderBy = searchParams.get("orderBy");
+    if (orderBy) params.append("orderBy", orderBy);
+
+    const query = params.size ? "?" + params.toString() : "";
+    router.push("/issues/" + query);
   };
 
   return (
