@@ -3,14 +3,17 @@ import { Link, StatusBadge } from "@/app/components";
 import { Table } from "@radix-ui/themes";
 import delay from "delay";
 import IssueActions from "./IssueActions";
-import { Status } from "@prisma/client";
+import { Issue, Status } from "@prisma/client";
+import NextLink from "next/link";
+import { ArrowUpIcon } from "@radix-ui/react-icons";
 
 interface Props {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; orderBy: keyof Issue }>;
 }
 
 const IssuePage = async ({ searchParams }: Props) => {
-  const { status: filterStatus } = await searchParams;
+  const searchParamsAwaited = await searchParams;
+  const { status: filterStatus, orderBy } = searchParamsAwaited;
 
   const statuses = Object.values(Status);
   const status = statuses.includes(filterStatus as Status)
@@ -19,7 +22,14 @@ const IssuePage = async ({ searchParams }: Props) => {
 
   const issues = await prisma.issue.findMany({
     where: { status },
+    ...(orderBy && { orderBy: { [orderBy]: "asc" } }),
   });
+
+  const columns: { label: string; value: keyof Issue; className?: string }[] = [
+    { label: "Issue", value: "title" },
+    { label: "Status", value: "status", className: "hidden md:table-cell" },
+    { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+  ];
 
   await delay(1000);
 
@@ -31,13 +41,18 @@ const IssuePage = async ({ searchParams }: Props) => {
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Status
-            </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Created
-            </Table.ColumnHeaderCell>
+            {columns.map(({ label, value, className }) => (
+              <Table.ColumnHeaderCell key={value} className={className}>
+                <NextLink
+                  href={{ query: { ...searchParamsAwaited, orderBy: value } }}
+                >
+                  {label}
+                </NextLink>
+                {value === searchParamsAwaited.orderBy && (
+                  <ArrowUpIcon className="inline" />
+                )}
+              </Table.ColumnHeaderCell>
+            ))}
           </Table.Row>
         </Table.Header>
 
