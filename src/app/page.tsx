@@ -1,9 +1,11 @@
-import Pagination from "@/app/components/Pagination";
+import LatestIssues from "./LatestIssues";
 
 export default function Home() {
   return (
     <>
       <h1>Home Page</h1>
+
+      <LatestIssues />
     </>
   );
 }
