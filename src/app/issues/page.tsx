@@ -1,86 +1,63 @@
 import { prisma } from "@/lib/prisma";
-import { Link, StatusBadge } from "@/app/components";
-import { Table } from "@radix-ui/themes";
 import delay from "delay";
 import IssueActions from "./IssueActions";
-import { Issue, Status } from "@prisma/client";
-import NextLink from "next/link";
-import { ArrowUpIcon } from "@radix-ui/react-icons";
-
+import { Status } from "@prisma/client";
+import Pagination from "../components/Pagination";
+import IssueTable, { IssueQuery } from "./IssueTable";
+import { columnNames } from "./IssueTable";
+import { Flex } from "@radix-ui/themes";
 interface Props {
-  searchParams: Promise<{ status?: string; orderBy: keyof Issue }>;
+  searchParams: Promise<IssueQuery>;
 }
 
 const IssuePage = async ({ searchParams }: Props) => {
   const searchParamsAwaited = await searchParams;
-  const { status: paramsFilterStatus, orderBy: paramsOrderBy } =
-    searchParamsAwaited;
+  const {
+    status: paramsFilterStatus,
+    orderBy: paramsOrderBy,
+    page: currentPage,
+  } = searchParamsAwaited;
 
   const statuses = Object.values(Status);
   const status = statuses.includes(paramsFilterStatus as Status)
     ? (paramsFilterStatus as Status)
     : undefined;
 
-  const columns: { label: string; value: keyof Issue; className?: string }[] = [
-    { label: "Issue", value: "title" },
-    { label: "Status", value: "status", className: "hidden md:table-cell" },
-    { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
-  ];
+  // store where filter into one object for reuse
+  const where = { status };
 
-  const orderBy = columns.map((col) => col.value).includes(paramsOrderBy)
+  const orderBy = columnNames.includes(paramsOrderBy)
     ? { [paramsOrderBy]: "asc" }
     : undefined;
 
+  const page = Number(currentPage) || 1;
+  const pageSize = 10;
+
   const issues = await prisma.issue.findMany({
-    where: { status },
+    where,
     orderBy,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
   });
+
+  const itemCount = await prisma.issue.count({ where });
 
   await delay(1000);
 
   if (!issues) return;
 
   return (
-    <div>
+    <Flex direction="column" gap="3">
       <IssueActions />
-      <Table.Root variant="surface">
-        <Table.Header>
-          <Table.Row>
-            {columns.map(({ label, value, className }) => (
-              <Table.ColumnHeaderCell key={value} className={className}>
-                <NextLink
-                  href={{ query: { ...searchParamsAwaited, orderBy: value } }}
-                >
-                  {label}
-                </NextLink>
-                {value === searchParamsAwaited.orderBy && (
-                  <ArrowUpIcon className="inline" />
-                )}
-              </Table.ColumnHeaderCell>
-            ))}
-          </Table.Row>
-        </Table.Header>
 
-        <Table.Body>
-          {issues.map(({ id, title, status, createdAt }) => (
-            <Table.Row key={id}>
-              <Table.RowHeaderCell>
-                <Link href={`issues/${id}`}>{title}</Link>
-                <div className="block md:hidden">
-                  <StatusBadge status={status}></StatusBadge>
-                </div>
-              </Table.RowHeaderCell>
-              <Table.Cell className="hidden md:table-cell">
-                <StatusBadge status={status}></StatusBadge>
-              </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
-                {createdAt.toDateString()}
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
-    </div>
+      <IssueTable issues={issues} searchParams={searchParamsAwaited} />
+
+      <Pagination
+        itemCount={itemCount}
+        pageSize={pageSize}
+        currentPage={page}
+      />
+    </Flex>
   );
 };
 
