@@ -8,6 +8,8 @@ import DeleteIssueButton from "./DeleteIssueButton";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import AssignIssueDropdown from "./AssignIssueDropdown";
+import type { Metadata } from "next";
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -44,3 +46,15 @@ const IssuePage = async ({ params }: Props) => {
 };
 
 export default IssuePage;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const issue = await prisma.issue.findUnique({
+    where: { id: Number(id) },
+  });
+
+  return {
+    title: issue?.title,
+    description: "Details of issue " + issue?.id,
+  };
+}
