@@ -34,14 +34,21 @@ const IssuePage = async ({ searchParams }: Props) => {
   const page = Number(currentPage) || 1;
   const pageSize = 10;
 
-  const issues = await prisma.issue.findMany({
-    where,
-    orderBy,
-    skip: (page - 1) * pageSize,
-    take: pageSize,
-  });
+  let issues,
+    itemCount = 0;
 
-  const itemCount = await prisma.issue.count({ where });
+  try {
+    issues = await prisma.issue.findMany({
+      where,
+      orderBy,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+
+    itemCount = await prisma.issue.count({ where });
+  } catch (error) {
+    console.error("Failed to fetch issue counts:", error);
+  }
 
   await delay(1000);
 

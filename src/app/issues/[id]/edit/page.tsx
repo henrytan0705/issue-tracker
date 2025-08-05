@@ -14,9 +14,16 @@ interface Props {
 
 const IssueEditPage = async ({ params }: Props) => {
   const { id } = await params;
-  const issue = await prisma.issue.findUnique({
-    where: { id: Number(id) },
-  });
+
+  let issue;
+
+  try {
+    issue = await prisma.issue.findUnique({
+      where: { id: Number(id) },
+    });
+  } catch (error) {
+    console.error("Failed to fetch current issue :", error);
+  }
 
   await delay(1000);
 

@@ -4,13 +4,19 @@ import Link from "next/link";
 import { StatusBadge } from "./components";
 
 const LatestIssues = async () => {
-  const issues = await prisma.issue.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 5,
-    include: {
-      assignedToUser: true,
-    },
-  });
+  let issues;
+
+  try {
+    issues = await prisma.issue.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: {
+        assignedToUser: true,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to fetch issue latest issues:", error);
+  }
 
   return (
     <Card>
@@ -19,7 +25,7 @@ const LatestIssues = async () => {
       </Heading>
       <Table.Root>
         <Table.Body>
-          {issues.map(({ id, title, status, assignedToUser }) => (
+          {issues?.map(({ id, title, status, assignedToUser }) => (
             <Table.Row key={id}>
               <Table.Cell>
                 <Flex justify="between">
