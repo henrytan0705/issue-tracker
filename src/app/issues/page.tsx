@@ -17,6 +17,7 @@ const IssuePage = async ({ searchParams }: Props) => {
     status: paramsFilterStatus,
     orderBy: paramsOrderBy,
     page: currentPage,
+    order,
   } = searchParamsAwaited;
 
   const statuses = Object.values(Status);
@@ -27,8 +28,9 @@ const IssuePage = async ({ searchParams }: Props) => {
   // store where filter into one object for reuse
   const where = { status };
 
+  // [fieldName] : "asc" || "desc"
   const orderBy = columnNames.includes(paramsOrderBy)
-    ? { [paramsOrderBy]: "asc" }
+    ? { [paramsOrderBy]: order }
     : undefined;
 
   const page = Number(currentPage) || 1;

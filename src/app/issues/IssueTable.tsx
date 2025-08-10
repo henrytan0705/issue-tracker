@@ -1,6 +1,6 @@
 import React from "react";
 import NextLink from "next/link";
-import { ArrowUpIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Link, StatusBadge } from "@/app/components";
 import { Table } from "@radix-ui/themes";
 import { Issue } from "@prisma/client";
@@ -9,6 +9,7 @@ export interface IssueQuery {
   status?: string;
   orderBy: keyof Issue;
   page: string;
+  order: string;
 }
 
 interface Props {
@@ -24,12 +25,30 @@ const IssueTable = ({ issues, searchParams }: Props) => {
           <Table.Row>
             {columns.map(({ label, value, className }) => (
               <Table.ColumnHeaderCell key={value} className={className}>
-                <NextLink href={{ query: { ...searchParams, orderBy: value } }}>
+                <NextLink
+                  href={{
+                    query: {
+                      ...searchParams,
+                      orderBy: value,
+                      order:
+                        searchParams.order && searchParams.order === "asc"
+                          ? "desc"
+                          : "asc",
+                    },
+                  }}
+                >
                   {label}
                 </NextLink>
-                {value === searchParams.orderBy && (
-                  <ArrowUpIcon className="inline" />
-                )}
+
+                {value === searchParams.orderBy &&
+                  searchParams.order === "asc" && (
+                    <ArrowUpIcon className="inline" />
+                  )}
+
+                {value === searchParams.orderBy &&
+                  searchParams.order === "desc" && (
+                    <ArrowDownIcon className="inline" />
+                  )}
               </Table.ColumnHeaderCell>
             ))}
           </Table.Row>
