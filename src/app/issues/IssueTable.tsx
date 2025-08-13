@@ -2,8 +2,8 @@ import React from "react";
 import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Link, StatusBadge } from "@/app/components";
-import { Table } from "@radix-ui/themes";
-import { Issue } from "@prisma/client";
+import { Avatar, Table } from "@radix-ui/themes";
+import { Issue, User } from "@prisma/client";
 
 export interface IssueQuery {
   status?: string;
@@ -12,8 +12,12 @@ export interface IssueQuery {
   order: string;
 }
 
+interface IssueWithUser extends Issue {
+  assignedToUser: User | null;
+}
+
 interface Props {
-  issues: Issue[];
+  issues: IssueWithUser[];
   searchParams: IssueQuery;
 }
 
@@ -55,7 +59,7 @@ const IssueTable = ({ issues, searchParams }: Props) => {
         </Table.Header>
 
         <Table.Body>
-          {issues.map(({ id, title, status, createdAt }) => (
+          {issues.map(({ id, title, status, createdAt, assignedToUser }) => (
             <Table.Row key={id}>
               <Table.RowHeaderCell>
                 <Link href={`issues/${id}`}>{title}</Link>
@@ -69,6 +73,16 @@ const IssueTable = ({ issues, searchParams }: Props) => {
               <Table.Cell className="hidden md:table-cell">
                 {createdAt.toDateString()}
               </Table.Cell>
+              <Table.Cell className="hidden md:table-cell">
+                {assignedToUser ? (
+                  <Avatar
+                    src={assignedToUser.image!}
+                    fallback="?"
+                    size="2"
+                    radius="full"
+                  />
+                ) : null}
+              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
@@ -81,6 +95,11 @@ const columns: { label: string; value: keyof Issue; className?: string }[] = [
   { label: "Issue", value: "title" },
   { label: "Status", value: "status", className: "hidden md:table-cell" },
   { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+  {
+    label: "Assignee",
+    value: "assignedToUserId",
+    className: "hidden md:table-cell",
+  },
 ];
 
 export const columnNames = columns.map((col) => col.value);

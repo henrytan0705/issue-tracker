@@ -43,6 +43,9 @@ const IssuePage = async ({ searchParams }: Props) => {
     issues = await prisma.issue.findMany({
       where,
       orderBy,
+      include: {
+        assignedToUser: true,
+      },
       skip: (page - 1) * pageSize,
       take: pageSize,
     });
