@@ -60,28 +60,44 @@ const IssueTable = ({ issues, searchParams }: Props) => {
 
         <Table.Body>
           {issues.map(({ id, title, status, createdAt, assignedToUser }) => (
-            <Table.Row key={id}>
+            <Table.Row key={id} className="h-14">
               <Table.RowHeaderCell>
-                <Link href={`issues/${id}`}>{title}</Link>
-                <div className="block md:hidden">
-                  <StatusBadge status={status}></StatusBadge>
+                <div className="flex flex-col md:flex-row md:items-center gap-2 h-full">
+                  <Link href={`issues/${id}`}>{title}</Link>
+                  <div className="flex md:hidden items-center gap-2">
+                    <StatusBadge status={status}></StatusBadge>
+                    {assignedToUser ? (
+                      <Avatar
+                        src={assignedToUser.image!}
+                        fallback="?"
+                        size="2"
+                        radius="full"
+                      />
+                    ) : null}
+                  </div>
                 </div>
               </Table.RowHeaderCell>
               <Table.Cell className="hidden md:table-cell">
-                <StatusBadge status={status}></StatusBadge>
+                <div className="flex items-center h-full">
+                  <StatusBadge status={status}></StatusBadge>
+                </div>
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-                {createdAt.toDateString()}
+                <div className="flex items-center h-full">
+                  {createdAt.toDateString()}
+                </div>
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-                {assignedToUser ? (
-                  <Avatar
-                    src={assignedToUser.image!}
-                    fallback="?"
-                    size="2"
-                    radius="full"
-                  />
-                ) : null}
+                <div className="flex items-center h-full">
+                  {assignedToUser ? (
+                    <Avatar
+                      src={assignedToUser.image!}
+                      fallback="?"
+                      size="2"
+                      radius="full"
+                    />
+                  ) : null}
+                </div>
               </Table.Cell>
             </Table.Row>
           ))}
