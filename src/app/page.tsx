@@ -8,7 +8,8 @@ import type { Metadata } from "next";
 export default async function Home() {
   let open = 0,
     inProgress = 0,
-    closed = 0;
+    closed = 0,
+    total = 0;
 
   try {
     open = await prisma.issue.count({ where: { status: "OPEN" } });
@@ -16,6 +17,7 @@ export default async function Home() {
       where: { status: "IN_PROGRESS" },
     });
     closed = await prisma.issue.count({ where: { status: "CLOSED" } });
+    total = await prisma.issue.count();
   } catch (error) {
     console.error("Failed to fetch issue counts:", error);
   }
@@ -23,7 +25,12 @@ export default async function Home() {
   return (
     <Grid columns={{ initial: "1", md: "2" }} gap="5">
       <Flex direction="column" gap="5">
-        <IssueSummary open={open} inProgress={inProgress} closed={closed} />
+        <IssueSummary
+          open={open}
+          inProgress={inProgress}
+          closed={closed}
+          total={total}
+        />
         <IssueChartWrapper
           open={open}
           inProgress={inProgress}
