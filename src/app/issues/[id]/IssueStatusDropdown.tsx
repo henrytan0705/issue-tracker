@@ -66,6 +66,7 @@ const IssueStatusDropdown = ({ issue }: { issue: Issue }) => {
         <Select.Content>
           {statuses.map(({ label, color, value }) => (
             <Select.Item
+              key={value}
               value={value}
               className={`${colorMap[color]} font-medium`}
             >
