@@ -10,6 +10,7 @@ import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import AssignIssueDropdown from "./AssignIssueDropdown";
 import type { Metadata } from "next";
 import { cache } from "react";
+import IssueStatusDropdown from "./IssueStatusDropdown";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -41,6 +42,7 @@ const IssuePage = async ({ params }: Props) => {
         <Box>
           <Flex direction="column" gap="4">
             <AssignIssueDropdown issue={issue} />
+            <IssueStatusDropdown issue={issue} />
             <EditIssueButton issueId={id} />
             <DeleteIssueButton issueId={id} />
           </Flex>

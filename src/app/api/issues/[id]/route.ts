@@ -33,7 +33,7 @@ export async function PATCH(
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({}, { status: 400 });
 
-    const id = (await params).id;
+    const { id } = await params;
 
     // validate body first
     const body = await request.json();
@@ -42,7 +42,12 @@ export async function PATCH(
     if (!validate.success)
       return NextResponse.json(validate.error.issues, { status: 400 });
 
-    const { title, description, assignedToUserId } = body;
+    const { title, description, assignedToUserId, status } = body;
+    let finalStatus = status;
+
+    // default status to IN_PROGRESS for assigning users
+    if (assignedToUserId && !status) finalStatus = "IN_PROGRESS";
+
     if (assignedToUserId) {
       const user = await prisma.user.findUnique({
         where: { id: assignedToUserId },
@@ -69,7 +74,7 @@ export async function PATCH(
         title,
         description,
         assignedToUserId,
-        status: "IN_PROGRESS",
+        status: finalStatus,
       },
     });
     return NextResponse.json(updatedIssue, { status: 200 });
