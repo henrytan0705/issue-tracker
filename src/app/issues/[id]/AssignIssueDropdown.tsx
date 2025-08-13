@@ -7,8 +7,10 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/app/components";
 import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const AssignIssueDropdown = ({ issue }: { issue: Issue }) => {
+  const router = useRouter();
   const { data: users, error, isLoading } = useUsers();
 
   const assignIssue = async (userId: string) => {
@@ -17,6 +19,7 @@ const AssignIssueDropdown = ({ issue }: { issue: Issue }) => {
         assignedToUserId: userId === "null" ? null : userId,
       });
       toast.success("Issue assigned successfully!");
+      router.refresh();
     } catch (error) {
       console.error(error);
       toast.error("Unable to assign task.");

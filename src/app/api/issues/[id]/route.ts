@@ -69,6 +69,7 @@ export async function PATCH(
         title,
         description,
         assignedToUserId,
+        status: "IN_PROGRESS",
       },
     });
     return NextResponse.json(updatedIssue, { status: 200 });
