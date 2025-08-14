@@ -16,3 +16,9 @@ export const patchIssueSchema = z.object({
     .nullable(),
   status: z.enum(["OPEN", "CLOSED", "IN_PROGRESS"]).optional(),
 });
+
+export const commentSchema = z.object({
+  content: z.string().min(1, "Content is required."),
+  userId: z.string().min(1, "userId is required.").max(255),
+  issueId: z.string().min(1, "IssueId is required.").max(255),
+});
