@@ -6,7 +6,6 @@ import authOptions from "../auth/[...nextauth]/authOptions";
 
 export async function GET() {
   const issues = await prisma.issue.findMany();
-
   return NextResponse.json(issues, { status: 200 });
 }
 
