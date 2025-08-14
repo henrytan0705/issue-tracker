@@ -14,14 +14,15 @@ datasource db {
 }
 
 model Issue {
-  id               Int      @id @default(autoincrement())
-  title            String   @db.VarChar(255)
-  description      String   @db.Text
-  status           Status   @default(OPEN)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  assignedToUserId String?  @db.VarChar(255)
-  assignedToUser   User?    @relation(fields: [assignedToUserId], references: [id])
+  id               Int       @id @default(autoincrement())
+  title            String    @db.VarChar(255)
+  description      String    @db.Text
+  status           Status    @default(OPEN)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  assignedToUserId String?   @db.VarChar(255)
+  assignedToUser   User?     @relation(fields: [assignedToUserId], references: [id])
+  comments         Comment[]
 }
 
 enum Status {
@@ -40,6 +41,7 @@ model User {
   accounts       Account[]
   sessions       Session[]
   assignedIssues Issue[]
+  comments       Comment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -87,4 +89,19 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Comment {
+  id      String  @id @default(cuid())
+  content String  @db.Text
+  edited  Boolean @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  issueId Int
+  issue   Issue @relation(fields: [issueId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
