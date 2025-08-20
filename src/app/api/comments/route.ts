@@ -26,14 +26,16 @@ export async function POST(request: NextRequest) {
 
     // Check if User exists
     const user = await prisma.user.findUnique({
-      where: { id: session.user.email },
+      where: { email: session.user.email },
     });
 
     if (!user)
       return NextResponse.json({ error: "Invalid User." }, { status: 404 });
 
     // Check if Issue exists
-    const issue = await prisma.issue.findUnique({ where: { id: issueId } });
+    const issue = await prisma.issue.findUnique({
+      where: { id: issueId },
+    });
 
     if (!issue)
       return NextResponse.json({ error: "Issue not found." }, { status: 404 });
