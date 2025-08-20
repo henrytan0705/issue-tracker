@@ -37,11 +37,9 @@ const IssuePage = async ({ params }: Props) => {
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">
       <Box className="md:col-span-4">
         <IssueDetails issue={issue} />
-        {session && (
-          <Box>
-            <CommentsBox issueId={id} />
-          </Box>
-        )}
+        <Box>
+          <CommentsBox issueId={id} />
+        </Box>
       </Box>
 
       {session && (

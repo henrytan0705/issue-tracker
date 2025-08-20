@@ -13,7 +13,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({}, { status: 401 });
+    if (!session || !session.user?.email)
+      return NextResponse.json({}, { status: 401 });
 
     const body = await request.json();
     const validate = commentSchema.safeParse(body);
@@ -21,15 +22,17 @@ export async function POST(request: NextRequest) {
     if (!validate.success)
       return NextResponse.json(validate.error.issues, { status: 400 });
 
-    const { content, userId, issueId } = body;
+    const { content, issueId } = body;
 
-    if (userId) {
-      const user = await prisma.user.findUnique({ where: { id: userId } });
+    // Check if User exists
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.email },
+    });
 
-      if (!user)
-        return NextResponse.json({ error: "Invalid User." }, { status: 404 });
-    }
+    if (!user)
+      return NextResponse.json({ error: "Invalid User." }, { status: 404 });
 
+    // Check if Issue exists
     const issue = await prisma.issue.findUnique({ where: { id: issueId } });
 
     if (!issue)
@@ -38,7 +41,7 @@ export async function POST(request: NextRequest) {
     const newComment = await prisma.comment.create({
       data: {
         content,
-        userId,
+        userId: user.id,
         issueId,
       },
     });
