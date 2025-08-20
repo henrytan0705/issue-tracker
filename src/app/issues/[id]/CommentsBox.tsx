@@ -25,12 +25,14 @@ const CommentsBox = async ({ issueId }: Props) => {
   }
 
   return (
-    <Flex direction="column" className="mt-6 w-full max-w-2xl">
-      <Text weight="bold" className="mb-3 text-lg">
-        Comments:
-      </Text>
+    <Flex direction="column" className="mt-3 w-full max-w-2xl">
+      {comments && comments.length > 0 && (
+        <Text weight="bold" className="text-lg">
+          Comments:
+        </Text>
+      )}
 
-      <Flex direction="column" gap="4">
+      <Flex direction="column" gap="4" className="mt-3">
         {comments?.map(
           ({ id, content, createdAt, updatedAt, user, edited }) => (
             <Card key={id} className="p-4 rounded-2xl shadow-sm">
