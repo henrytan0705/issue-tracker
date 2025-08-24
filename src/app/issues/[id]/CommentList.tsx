@@ -1,18 +1,29 @@
-import { Avatar, Card, Flex, Text, Button } from "@radix-ui/themes";
+"use client";
+
 import React from "react";
-import { Comment, User } from "@prisma/client";
+import { Avatar, Card, Flex, Text, Button } from "@radix-ui/themes";
 import { formatDistanceToNow } from "date-fns";
 import axios from "axios";
-
-interface CommentWithUser extends Comment {
-  user: User;
-}
+import { CommentWithUser } from "./CommentsBox";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   comments?: CommentWithUser[];
+  issueId: string;
 }
 
-const CommentList = ({ comments }: Props) => {
+const CommentList = ({ comments, issueId }: Props) => {
+  const queryClient = useQueryClient();
+
+  const deleteComment = async (id: string) => {
+    try {
+      await axios.delete(`/api/comments/${id}`);
+      queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <Flex direction="column" gap="4" className="mt-3">
@@ -48,7 +59,12 @@ const CommentList = ({ comments }: Props) => {
                 <Button variant="ghost" size="1" disabled>
                   Edit
                 </Button>
-                <Button variant="ghost" size="1" color="red" disabled>
+                <Button
+                  variant="ghost"
+                  size="1"
+                  color="red"
+                  onClick={() => deleteComment(id)}
+                >
                   Delete
                 </Button>
               </Flex>

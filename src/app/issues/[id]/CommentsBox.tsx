@@ -1,29 +1,29 @@
-import { prisma } from "@/lib/prisma";
-import { Avatar, Box, Button, Card, Flex, Text } from "@radix-ui/themes";
+"use client";
+
+import { Flex, Text } from "@radix-ui/themes";
 import React from "react";
-import { formatDistanceToNow } from "date-fns";
-import { getServerSession } from "next-auth";
-import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import CommentInput from "./CommentInput";
 import CommentList from "./CommentList";
-
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { User } from "@prisma/client";
+import { Comment } from "@prisma/client";
+import { useSession } from "next-auth/react";
 interface Props {
   issueId: string;
 }
 
-const CommentsBox = async ({ issueId }: Props) => {
-  const session = await getServerSession(authOptions);
+export interface CommentWithUser extends Comment {
+  user: User;
+}
 
-  let comments;
+const CommentsBox = ({ issueId }: Props) => {
+  const { data: session } = useSession();
 
-  try {
-    comments = await prisma.comment.findMany({
-      where: { issueId: Number(issueId) },
-      include: { user: true },
-    });
-  } catch (error) {
-    console.error(error);
-  }
+  const { data: comments, isLoading, error } = useComments(issueId);
+
+  if (isLoading) return <Text>Loading comments...</Text>;
+  if (error) return <Text>Error loading comments.</Text>;
 
   return (
     <Flex direction="column" className="mt-3 w-full max-w-2xl">
@@ -33,11 +33,19 @@ const CommentsBox = async ({ issueId }: Props) => {
         </Text>
       )}
 
-      <CommentList comments={comments} />
+      <CommentList comments={comments} issueId={issueId} />
 
-      {session && <CommentInput />}
+      {session && <CommentInput issueId={issueId} />}
     </Flex>
   );
 };
+
+const useComments = (issueId: string) =>
+  useQuery<CommentWithUser[], Error>({
+    queryKey: ["comments", issueId],
+    queryFn: () =>
+      axios.get(`/api/comments/${issueId}`).then((res) => res.data),
+    initialData: [],
+  });
 
 export default CommentsBox;
