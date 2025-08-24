@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import authOptions from "../../auth/[...nextauth]/authOptions";
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
