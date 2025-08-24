@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import axios from "axios";
 import { CommentWithUser } from "./CommentsBox";
 import { useQueryClient } from "@tanstack/react-query";
+import DeleteCommentButton from "./DeleteCommentButton";
 
 interface Props {
   comments?: CommentWithUser[];
@@ -59,14 +60,8 @@ const CommentList = ({ comments, issueId }: Props) => {
                 <Button variant="ghost" size="1" disabled>
                   Edit
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="1"
-                  color="red"
-                  onClick={() => deleteComment(id)}
-                >
-                  Delete
-                </Button>
+
+                <DeleteCommentButton commentId={id} />
               </Flex>
             </Card>
           )
