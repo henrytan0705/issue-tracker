@@ -28,13 +28,7 @@ const CommentInput = ({ issueId }: Props) => {
       toast.success("Comment submitted successfully");
       queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     } catch (error) {
-      let errorDisplayMessage = "Unable to submit comment";
-
-      if (axios.isAxiosError(error) && error?.response?.status === 401) {
-        errorDisplayMessage = "Please login to post comments.";
-      }
-
-      toast.error(errorDisplayMessage);
+      toast.error("Unable to submit comment");
     }
   };
 
@@ -49,6 +43,7 @@ const CommentInput = ({ issueId }: Props) => {
             className="w-full rounded-xl px-3 py-2"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            disabled={!session}
           />
           <Flex justify="end" className="mt-2">
             <Button type="submit" size="2" disabled={!content.length}>
