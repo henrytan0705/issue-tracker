@@ -1,45 +1,41 @@
 "use client";
 
-import { TrashIcon } from "@radix-ui/react-icons";
 import { AlertDialog, Button, Flex } from "@radix-ui/themes";
+import React, { useState } from "react";
 import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "@/app/components";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
-const DeleteIssueButton = ({ issueId }: { issueId: string }) => {
-  const router = useRouter();
+const DeleteCommentButton = ({ commentId }: { commentId: string }) => {
+  const queryClient = useQueryClient();
+  const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const deleteIssue = async () => {
+  const deleteComment = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`/api/issues/${issueId}`);
-      router.push("/issues");
-      router.refresh();
+      await axios.delete(`/api/comments/${commentId}`);
+      queryClient.invalidateQueries({ queryKey: ["comments", params.id] });
     } catch (error) {
-      setIsLoading(false);
-      setError(true);
       console.error(error);
     }
+    setIsLoading(false);
   };
-
   return (
     <>
       <AlertDialog.Root>
         <AlertDialog.Trigger>
-          <Button color="red" disabled={isLoading}>
-            <TrashIcon />
-            Delete Issue
-            {isLoading && <Spinner />}
+          <Button variant="ghost" size="1" color="red">
+            Delete
           </Button>
         </AlertDialog.Trigger>
 
         <AlertDialog.Content maxWidth="450px">
-          <AlertDialog.Title>Delete Issue</AlertDialog.Title>
+          <AlertDialog.Title>Delete Comment</AlertDialog.Title>
           <AlertDialog.Description size="2">
-            Are you sure? This issue will no longer be accessible.
+            Are you sure? This comment will no longer be accessible.
           </AlertDialog.Description>
 
           <Flex gap="3" mt="4" justify="end">
@@ -48,9 +44,9 @@ const DeleteIssueButton = ({ issueId }: { issueId: string }) => {
                 type="button"
                 variant="solid"
                 color="red"
-                onClick={deleteIssue}
+                onClick={deleteComment}
               >
-                Delete Issue
+                Delete
               </Button>
             </AlertDialog.Action>
             <AlertDialog.Cancel>
@@ -66,7 +62,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: string }) => {
         <AlertDialog.Content maxWidth="450px">
           <AlertDialog.Title> Error</AlertDialog.Title>
           <AlertDialog.Description>
-            There was an error with deleting this issue.
+            There was an error with deleting this comment.
           </AlertDialog.Description>
           <AlertDialog.Cancel>
             <Button
@@ -84,4 +80,4 @@ const DeleteIssueButton = ({ issueId }: { issueId: string }) => {
   );
 };
 
-export default DeleteIssueButton;
+export default DeleteCommentButton;

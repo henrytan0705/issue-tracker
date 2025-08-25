@@ -11,6 +11,7 @@ import AssignIssueDropdown from "./AssignIssueDropdown";
 import type { Metadata } from "next";
 import { cache } from "react";
 import IssueStatusDropdown from "./IssueStatusDropdown";
+import CommentsBox from "./CommentsBox";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -36,6 +37,9 @@ const IssuePage = async ({ params }: Props) => {
     <Grid columns={{ initial: "1", sm: "5" }} gap="5">
       <Box className="md:col-span-4">
         <IssueDetails issue={issue} />
+        <Box>
+          <CommentsBox issueId={id} />
+        </Box>
       </Box>
 
       {session && (
