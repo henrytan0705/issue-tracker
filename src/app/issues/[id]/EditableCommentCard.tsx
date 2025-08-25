@@ -2,7 +2,7 @@
 
 import { Box, Button, Card, Flex, TextField } from "@radix-ui/themes";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -50,6 +50,19 @@ const EditableCommentCard = ({
     setEditing(false);
     setEditingCommentId("");
   };
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setEditing(false);
+        setEditingCommentId("");
+        setNewContent(content);
+      }
+    };
+
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [content]);
 
   return (
     <Card>
