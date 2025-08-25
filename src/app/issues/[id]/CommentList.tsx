@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { Avatar, Card, Flex, Text, Button } from "@radix-ui/themes";
-import { formatDistanceToNow } from "date-fns";
-import { CommentWithUser } from "./CommentsBox";
-import DeleteCommentButton from "./DeleteCommentButton";
+import { Flex } from "@radix-ui/themes";
+import { useState } from "react";
 import CommentCard from "./CommentCard";
+import { CommentWithUser } from "./CommentsBox";
 import EditableCommentCard from "./EditableCommentCard";
 
 interface Props {

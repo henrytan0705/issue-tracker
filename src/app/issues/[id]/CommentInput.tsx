@@ -3,9 +3,9 @@
 import { Box, Button, Flex, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import React, { useState } from "react";
-// import { useRouter, useParams } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 interface Props {
   issueId: string;
@@ -13,6 +13,7 @@ interface Props {
 
 const CommentInput = ({ issueId }: Props) => {
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
 
   const [content, setContent] = useState("");
 
@@ -27,18 +28,24 @@ const CommentInput = ({ issueId }: Props) => {
       toast.success("Comment submitted successfully");
       queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     } catch (error) {
-      console.error(error);
-      toast.error("Unable to submit comment.");
+      let errorDisplayMessage = "Unable to submit comment";
+
+      if (axios.isAxiosError(error) && error?.response?.status === 401) {
+        errorDisplayMessage = "Please login to post comments.";
+      }
+
+      toast.error(errorDisplayMessage);
     }
   };
 
   return (
     <div>
-      <Toaster />
       <Box className="mt-6">
         <form onSubmit={submitComment}>
           <TextField.Root
-            placeholder="Add a comment..."
+            placeholder={
+              session ? "Add a comment..." : "Log in to post a comment"
+            }
             className="w-full rounded-xl px-3 py-2"
             value={content}
             onChange={(e) => setContent(e.target.value)}
