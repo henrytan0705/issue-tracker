@@ -1,8 +1,11 @@
+"use client";
+
 import { User } from "@prisma/client";
 import { Avatar, Button, Card, Flex, Text } from "@radix-ui/themes";
 import React from "react";
 import { formatDistanceToNow } from "date-fns";
 import DeleteCommentButton from "./DeleteCommentButton";
+import { useSession } from "next-auth/react";
 
 interface Props {
   id: string;
@@ -25,6 +28,8 @@ const CommentCard = ({
   setEditing,
   setEditingCommentId,
 }: Props) => {
+  const { data: session } = useSession();
+
   const enableEditing = () => {
     setEditing(true);
     setEditingCommentId(id);
@@ -52,13 +57,15 @@ const CommentCard = ({
         </Flex>
       </Flex>
 
-      <Flex gap="3" className="mt-2 ml-10">
-        <Button variant="ghost" size="1" onClick={enableEditing}>
-          Edit
-        </Button>
+      {session && session?.user?.email === user?.email && (
+        <Flex gap="3" className="mt-2 ml-10">
+          <Button variant="ghost" size="1" onClick={enableEditing}>
+            Edit
+          </Button>
 
-        <DeleteCommentButton commentId={id} />
-      </Flex>
+          <DeleteCommentButton commentId={id} />
+        </Flex>
+      )}
     </Card>
   );
 };
