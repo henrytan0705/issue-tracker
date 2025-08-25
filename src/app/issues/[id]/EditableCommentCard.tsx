@@ -62,7 +62,13 @@ const EditableCommentCard = ({
             onChange={(e) => setNewContent(e.target.value)}
           />
           <Flex justify="end" className="mt-2" gap="2">
-            <Button variant="soft" color="gray" size="2" onClick={cancelEdit}>
+            <Button
+              type="button"
+              variant="soft"
+              color="gray"
+              size="2"
+              onClick={cancelEdit}
+            >
               Cancel
             </Button>
             <Button
