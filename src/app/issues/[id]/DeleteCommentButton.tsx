@@ -39,16 +39,21 @@ const DeleteCommentButton = ({ commentId }: { commentId: string }) => {
           </AlertDialog.Description>
 
           <Flex gap="3" mt="4" justify="end">
-            <AlertDialog.Cancel>
-              <Button variant="soft" color="gray">
-                Cancel
-              </Button>
-            </AlertDialog.Cancel>
             <AlertDialog.Action>
-              <Button variant="solid" color="red" onClick={deleteComment}>
+              <Button
+                type="button"
+                variant="solid"
+                color="red"
+                onClick={deleteComment}
+              >
                 Delete
               </Button>
             </AlertDialog.Action>
+            <AlertDialog.Cancel>
+              <Button type="button" variant="soft" color="gray">
+                Cancel
+              </Button>
+            </AlertDialog.Cancel>
           </Flex>
         </AlertDialog.Content>
       </AlertDialog.Root>

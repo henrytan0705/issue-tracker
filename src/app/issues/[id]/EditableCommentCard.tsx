@@ -63,6 +63,13 @@ const EditableCommentCard = ({
           />
           <Flex justify="end" className="mt-2" gap="2">
             <Button
+              type="submit"
+              size="2"
+              disabled={!content.length || isSubmitting}
+            >
+              Save
+            </Button>
+            <Button
               type="button"
               variant="soft"
               color="gray"
@@ -70,13 +77,6 @@ const EditableCommentCard = ({
               onClick={cancelEdit}
             >
               Cancel
-            </Button>
-            <Button
-              type="submit"
-              size="2"
-              disabled={!content.length || isSubmitting}
-            >
-              Save
             </Button>
           </Flex>
         </form>
