@@ -22,6 +22,7 @@ const CommentList = ({ comments }: Props) => {
         {comments?.map(({ id, content, createdAt, updatedAt, user, edited }) =>
           editing && id === editingCommentId ? (
             <EditableCommentCard
+              key={id}
               id={id}
               content={content}
               setEditing={setEditing}
@@ -29,6 +30,7 @@ const CommentList = ({ comments }: Props) => {
             />
           ) : (
             <CommentCard
+              key={id}
               id={id}
               content={content}
               createdAt={createdAt}
