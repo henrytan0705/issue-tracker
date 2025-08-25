@@ -8,7 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { User } from "@prisma/client";
 import { Comment } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { Toaster } from "react-hot-toast";
+
 interface Props {
   issueId: string;
 }
@@ -18,8 +19,6 @@ export interface CommentWithUser extends Comment {
 }
 
 const CommentsBox = ({ issueId }: Props) => {
-  const { data: session } = useSession();
-
   const { data: comments, isLoading, error } = useComments(issueId);
 
   if (isLoading) return <Text>Loading comments...</Text>;
@@ -27,6 +26,7 @@ const CommentsBox = ({ issueId }: Props) => {
 
   return (
     <Flex direction="column" className="mt-3 w-full max-w-2xl">
+      <Toaster />
       {comments && comments.length > 0 && (
         <Text weight="bold" className="text-lg">
           Comments:
@@ -35,7 +35,7 @@ const CommentsBox = ({ issueId }: Props) => {
 
       <CommentList comments={comments} />
 
-      {session && <CommentInput issueId={issueId} />}
+      <CommentInput issueId={issueId} />
     </Flex>
   );
 };
