@@ -21,3 +21,7 @@ export const commentSchema = z.object({
   content: z.string().min(1, "Content is required."),
   issueId: z.number().int().positive(),
 });
+
+export const commentEditSchema = z.object({
+  content: z.string().min(1, "Content is required."),
+});

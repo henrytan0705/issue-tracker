@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { commentSchema } from "../../../validationSchemas";
+import { commentEditSchema, commentSchema } from "../../../validationSchemas";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import authOptions from "../../auth/[...nextauth]/authOptions";
@@ -40,29 +40,28 @@ export async function PATCH(
     const { id } = await params;
 
     const body = await request.json();
-    const validate = commentSchema.safeParse(body);
+    const validate = commentEditSchema.safeParse(body);
 
     if (!validate.success)
       return NextResponse.json(validate.error.issues, { status: 400 });
 
-    const { content, userId, issueId } = body;
+    const comment = await prisma.comment.findUnique({
+      where: { id },
+    });
 
-    if (userId) {
-      const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!comment)
+      return NextResponse.json(
+        { error: "Comment not found." },
+        { status: 404 }
+      );
 
-      if (!user)
-        return NextResponse.json({ error: "Invalid User." }, { status: 404 });
-    }
-
-    const issue = await prisma.issue.findUnique({ where: { id: issueId } });
-
-    if (!issue)
-      return NextResponse.json({ error: "Issue not found." }, { status: 404 });
+    const { content } = body;
 
     const updatedComment = await prisma.comment.update({
       where: { id },
       data: {
         content,
+        edited: true,
       },
     });
 

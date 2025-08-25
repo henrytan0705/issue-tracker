@@ -33,7 +33,7 @@ const CommentsBox = ({ issueId }: Props) => {
         </Text>
       )}
 
-      <CommentList comments={comments} issueId={issueId} />
+      <CommentList comments={comments} />
 
       {session && <CommentInput issueId={issueId} />}
     </Flex>
