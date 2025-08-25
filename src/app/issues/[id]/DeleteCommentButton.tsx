@@ -29,6 +29,7 @@ const DeleteCommentButton = ({ commentId }: { commentId: string }) => {
         <AlertDialog.Trigger>
           <Button variant="ghost" size="1" color="red">
             Delete
+            {isLoading && <Spinner />}
           </Button>
         </AlertDialog.Trigger>
 
