@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Flex, TextField } from "@radix-ui/themes";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,7 +28,6 @@ const CommentInput = ({ issueId }: Props) => {
       toast.success("Comment submitted successfully");
       queryClient.invalidateQueries({ queryKey: ["comments", issueId] });
     } catch (error) {
-      // if (axios.isAxiosError)
       let errorDisplayMessage = "Unable to submit comment";
 
       if (axios.isAxiosError(error) && error?.response?.status === 401) {
